@@ -1,0 +1,75 @@
+import { Canvas, Meta, Story } from "@storybook/addon-docs";
+
+import { Chessboard } from "../src";
+
+<Meta
+  title="GuideBook/Stockfish Integration"
+  component={Chessboard}
+  parameters={{ previewTabs: { canvas: { hidden: true } } }}
+/>
+
+export const Template = (args) => <ComputerVsComputer {...args} />;
+
+# `DRL Trained` Integration with `react-chessboard`
+
+<br />
+
+---
+
+
+
+
+5.  ##### Ready! You now can use [Engine](https://github.com/Clariity/react-chessboard/blob/main/stories/stockfish/engine.ts) for detecting the best moves on your `react-chessboard`
+
+    The example below will create game where stockfish plays agianst itself
+
+    ```jsx
+    export const StockfishVsStockfish = () => {
+      const engine = useMemo(() => new Engine(), []);
+      const game = useMemo(() => new Chess(), []);
+      const [chessBoardPosition, setChessBoardPosition] = useState(game.fen());
+
+      function findBestMove() {
+        engine.evaluatePosition(game.fen(), 10);
+        engine.onMessage(({ bestMove }) => {
+          if (bestMove) {
+            game.move({
+              from: bestMove.substring(0, 2),
+              to: bestMove.substring(2, 4),
+              promotion: bestMove.substring(4, 5),
+            });
+
+            setChessBoardPosition(game.fen());
+          }
+        });
+      }
+
+      useEffect(() => {
+        if (!game.game_over() || game.in_draw()) {
+          setTimeout(findBestMove, 300);
+        }
+      }, [chessBoardPosition]);
+
+      return <Chessboard position={chessBoardPosition} />;
+    };
+    ```
+
+    <br />
+    <br />
+    <br />
+
+    ## More advanced examples with code you can see below
+
+    ### <center>Play vs computer</center>
+
+    <Canvas>
+      <Story id="example-chessboard--play-vs-computer" />
+    </Canvas>
+
+    <br /> <br />
+
+    ### <center>Analyse chess game using stockfish</center>
+
+    <Canvas>
+      <Story id="example-chessboard--analysis-board" />
+    </Canvas>
